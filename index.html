@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <!-- <script type="module" src="script.js"></script> -->
+     <script src="script.js"></script>
+    <title>My-Task-Management - Advanced TO-DO List</title>
+    
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>My Task Management</h1>
+            <p>Your Advanced Task Management Solution</p>
+        </div>
+
+        <!-- Authentication Section -->
+        <div id="authSection" class="auth-section">
+            <div id="loginForm" class="auth-form">
+                <h2>Welcome Back!</h2>
+                <p style="margin-bottom: 2rem; opacity: 0.7;">Sign in to access your tasks</p>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+                <button class="btn" onclick="login()">Sign In</button>
+                <button class="btn btn-secondary" onclick="showRegisterForm()">Create Account</button>
+                <button class="btn btn-secondary" onclick="continueAsGuest()">Continue as Guest</button>
+            </div>
+
+            <div id="registerForm" class="auth-form" style="display: none;">
+                <h2>Create Account</h2>
+                <p style="margin-bottom: 2rem; opacity: 0.7;">Join TaskMaster Pro today</p>
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" placeholder="Create a password">
+                </div>
+                <button class="btn" onclick="register()">Create Account</button>
+                <button class="btn btn-secondary" onclick="showLoginForm()">Already have account?</button>
+            </div>
+        </div>
+
+        <!-- Main Application -->
+        <div id="mainApp" class="main-app">
+            <div class="top-bar">
+                <div class="user-info">
+                    <div class="avatar" id="userAvatar">U</div>
+                    <div>
+                        <div id="userName">Guest User</div>
+                        <div style="font-size: 0.9rem; opacity: 0.7;" id="userEmail">guest@taskmaster.com</div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                        🌙
+                    </button>
+                    <button class="btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <!-- Task Form -->
+                    <div class="task-form">
+                        <h3>Add New Task</h3>
+                        <div class="form-group">
+                            <label for="taskTitle">Title *</label>
+                            <input type="text" id="taskTitle" placeholder="Task title">
+                        </div>
+                        <div class="form-group">
+                            <label for="taskDescription">Description</label>
+                            <input type="text" id="taskDescription" placeholder="Task description">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="taskPriority">Priority</label>
+                                <select id="taskPriority">
+                                    <option value="low">Low</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskDueDate">Due Date</label>
+                                <input type="date" id="taskDueDate">
+                            </div>
+                        </div>
+                        <button class="btn" onclick="addTask()" id="taskSubmitBtn">Add Task</button>
+                        <button class="btn btn-secondary" onclick="cancelEdit()" id="cancelEditBtn" style="display: none;">Cancel</button>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters">
+                        <h3>Filters & Search</h3>
+                        <div class="form-group">
+                            <input type="text" class="search-box" id="searchBox" placeholder="Search tasks..." oninput="filterTasks()">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <div class="filter-buttons">
+                                <div class="filter-btn active" data-filter="all" onclick="setStatusFilter('all')">All</div>
+                                <div class="filter-btn" data-filter="pending" onclick="setStatusFilter('pending')">Pending</div>
+                                <div class="filter-btn" data-filter="completed" onclick="setStatusFilter('completed')">Completed</div>
+                                <div class="filter-btn" data-filter="overdue" onclick="setStatusFilter('overdue')">Overdue</div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Priority</label>
+                            <div class="filter-buttons">
+                                <div class="filter-btn active" data-filter="all-priority" onclick="setPriorityFilter('all')">All</div>
+                                <div class="filter-btn" data-filter="high" onclick="setPriorityFilter('high')">High</div>
+                                <div class="filter-btn" data-filter="medium" onclick="setPriorityFilter('medium')">Medium</div>
+                                <div class="filter-btn" data-filter="low" onclick="setPriorityFilter('low')">Low</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="main-content">
+                    <div class="stats-bar">
+                        <div class="stat-card">
+                            <span class="stat-number" id="totalTasks">0</span>
+                            <span class="stat-label">Total Tasks</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="pendingTasks">0</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="completedTasks">0</span>
+                            <span class="stat-label">Completed</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="overdueTasks">0</span>
+                            <span class="stat-label">Overdue</span>
+                        </div>
+                    </div>
+
+                    <div class="tasks-header">
+                        <h2>Your Tasks</h2>
+                        <select id="sortBy" onchange="sortTasks()">
+                            <option value="created">Sort by Created</option>
+                            <option value="priority">Sort by Priority</option>
+                            <option value="dueDate">Sort by Due Date</option>
+                            <option value="title">Sort by Title</option>
+                        </select>
+                    </div>
+
+                    <div class="tasks-container" id="tasksContainer">
+                        <div class="empty-state">
+                            <h3>No tasks yet!</h3>
+                            <p>Add your first task to get started.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Task</h3>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="editTitle">Title</label>
+                <input type="text" id="editTitle">
+            </div>
+            <div class="form-group">
+                <label for="editDescription">Description</label>
+                <input type="text" id="editDescription">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editPriority">Priority</label>
+                    <select id="editPriority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDueDate">Due Date</label>
+                    <input type="date" id="editDueDate">
+                </div>
+            </div>
+            <button class="btn" onclick="saveEdit()">Save Changes</button>
+        </div>
+    </div>
+
+    
+</body>
+</html>
